@@ -10,12 +10,13 @@ import (
 
 func printUsage() {
 	title := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00D7FF")).Render("SYNIQ")
-	fmt.Printf("\n  %s — The AI-Powered Terminal Companion\n\n", title)
+	fmt.Printf("\n  %s — The AI-Powered Terminal Companion (v2.0.0)\n\n", title)
 	fmt.Println("  Usage:")
 	fmt.Println("    syniq chat            Start interactive chat session (FREE)")
 	fmt.Println("    syniq ask <query>     Ask a quick question")
 	fmt.Println("    syniq explain <cmd>   Explain a specific command")
 	fmt.Println("    syniq history         Show recent command history")
+	fmt.Println("    syniq version         Show version information")
 	fmt.Println("\n  Interactive Shortcuts:")
 	fmt.Println("    Ctrl+Y                Copy suggested command to clipboard")
 	fmt.Println("    Ctrl+R                Run suggested command (with confirmation)")
@@ -97,6 +98,8 @@ func main() {
 		explain(strings.Join(os.Args[2:], " "))
 	case "history":
 		showHistory()
+	case "version", "-v", "--version":
+		fmt.Println("syniq v2.0.0")
 	case "help":
 		printUsage()
 	default:
