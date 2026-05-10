@@ -1,206 +1,93 @@
-# syniq 
-An AI-powered Linux command-line assistant that converts natural language into safe shell commands.
+# SYNIQ 🚀
+> **The AI-Powered Linux Terminal Companion — No API Key Required.**
 
-syniq is an open-source, local-first command-line tool that converts natural
-language into accurate and safe Linux shell commands using Google Gemini.
+Syniq is a high-performance, local-first CLI tool designed to bridge the gap between human intent and the Linux command line. It translates natural language into safe, accurate shell commands using a free, public AI model.
 
-The project focuses on safety, transparency, offline usability, and simplicity.
-syniq never executes commands automatically and never sends data to any backend
-server controlled by the project.
-
-## Screenshot
-
-![Syniq CLI example](https://github.com/Vptsh/syniq/blob/dd1e3786da5694951ce92251bac9816a7dad96fe/ss.png)
----
-
-## WHY THIS PROJECT EXISTS
-
-Many Linux users know what they want to do, but not always the exact command.
-syniq bridges this gap by translating intent into commands while preventing
-destructive mistakes.
-
-This tool is suitable for students, developers, system administrators,
-and learning environments.
+## 📺 Features at a Glance
+- **Zero Configuration**: No API keys, tokens, or signups. It works instantly.
+- **Interactive TUI**: A premium, full-screen dashboard for deep exploration.
+- **Quote-less CLI**: Ask questions directly without wrapping them in quotes.
+- **Pro Rendering**: Markdown support with full syntax highlighting (via Glamour).
+- **Safety Engine**: Real-time analysis to block or warn against destructive commands.
+- **One-Touch Actions**: 
+    - `Ctrl+Y` to copy suggested commands.
+    - `Ctrl+R` to execute commands directly (after confirmation).
 
 ---
 
-## FEATURES
+## 🛠️ Installation
+### Prerequisites
+- **Go 1.22** or higher.
 
-- Natural-language to Linux command conversion
-- Built-in safety engine
-- Hard blocking of destructive commands
-- Warning and confirmation for risky commands
-- Command explanation mode
-- Command history and reuse
-- Offline fallback with fuzzy matching
-- Pretty terminal output
-- Automatic clipboard copy
-- No backend server required
-- Fully open source
-
----
-
-## WHAT Syniq DOES NOT DO
-
-- Does not execute commands automatically
-- Does not modify your system
-- Does not run as root
-- Does not collect telemetry
-- Does not store API keys remotely
-
----
-
-## USAGE
-
-Ask for a command:
+### Build from Source
 ```bash
- syniq ask "update fedora system"
-```
-
-Explain a command:
-```bash
-  syniq explain "sudo dnf upgrade --refresh -y"
-```
-View history:
-```bash
-  syniq history
-```
----
-
-## SAFETY MODEL
-
-Hard blocked commands include:
-- Root filesystem deletion
-- Disk formatting
-- Boot sector writes
-
-Risky commands require explicit user confirmation.
-
----
-
-## OFFLINE MODE
-
-If the Gemini API is unavailable, syniq automatically searches its local cache
-using fuzzy matching. Cached results are clearly marked.
-
-Cache location:
-```bash
-  ~/.config/syniq/history.json
-```
----
-
-## FIRST TIME SETUP
-
-**Get Gemini API Key here - https://aistudio.google.com/app/api-keys**
-
-Connect your Gemini API key:
-```bash
-  syniq connect
-```
-
-Key storage location:
-```bash
-  ~/.config/syniq/config.json
-```
----
-
-## INSTALLATION (BUILD FROM SOURCE)
-
-Requirements:
-- Linux
-- Go 1.21+
-
-### Steps:
-```bash
-  git clone https://github.com/Vptsh/syniq.git
-  cd syniq
-  go build -o syniq
-  sudo mv syniq /usr/local/bin/syniq
-```
-
-## Install via Prebuilt Packages (Recommended)
-
-Debian / Ubuntu / Zorin (.deb)
-```bash
-wget https://github.com/Vptsh/syniq-releases/releases/download/v0.1.0/syniq_0.1.0_amd64.deb
-sudo dpkg -i syniq_0.1.0_amd64.deb
-```
-
-
-If dependency errors occur:
-```bash
-sudo apt -f install
-```
-
-Fedora / RHEL (.rpm)
-```bash
-sudo rpm -ivh https://github.com/Vptsh/syniq-releases/releases/download/v0.1.0/syniq-0.1.0-1.fc43.x86_64.rpm
-```
-
-Verify Installation
-```bash
-syniq
+git clone https://github.com/Vptsh/syniq.git
+cd syniq
+go mod tidy
+go build -o syniq
+sudo mv syniq /usr/local/bin/syniq
 ```
 
 ---
 
+## 🚀 Usage
 
-## PROJECT STRUCTURE
+### 1. Interactive Mode (Recommended)
+Start a full-screen chat session to iterate on complex tasks:
 ```bash
-main.go         CLI entry
-gemini.go       Gemini integration
-config.go       Local config handling
-safety.go       Safety engine
-history.go      History persistence
-history_cmd.go  History command output
-cache.go        Offline cache and fuzzy matching
-ui.go           Output formatting and clipboard
-explain.go      Command explanation
+syniq chat
 ```
----
 
-## DESIGN DECISIONS
+### 2. Quick Command Lookup
+Get a one-off command for a specific task (quotes are optional):
+```bash
+syniq ask how to find all files larger than 100MB
+```
 
-- No backend to reduce cost and privacy risk
-- Local-first to allow offline usage
-- Explicit confirmation to avoid mistakes
-- Single static binary for distribution
+### 3. Deep Explanation
+Break down what a complex command or set of flags actually does:
+```bash
+syniq explain tar -xzvf archive.tar.gz
+```
 
----
-
-## LIMITATIONS
-
-- Requires a Gemini API key
-- Model output accuracy depends on the LLM
-- Linux only
-
----
-
-## ROADMAP
-
-- Configurable safety levels
-- Optional backend with OAuth
-- Additional LLM providers
+### 4. History
+Review your previous queries and the AI's suggestions:
+```bash
+syniq history
+```
 
 ---
 
-## CONTRIBUTING
-
-Contributions and suggestions are welcome.
-Please open a GitHub issue or pull request.
-
----
-
-## CONTACT
-
-Maintainer: Vptsh
-
-Email: psvineet@zohomail.in
-
-If you want changes or new features, open an issue or send an email.
+## ⌨️ Interactive Shortcuts
+While in **`syniq chat`** mode:
+| Shortcut | Action |
+| :--- | :--- |
+| **Enter** | Send your query to the AI |
+| **Ctrl + Y** | Copy the suggested command to clipboard |
+| **Ctrl + R** | Execute the suggested command (requires `y` confirmation) |
+| **Ctrl + C** | Exit the application |
+| **Esc** | Exit the application |
 
 ---
 
-## LICENSE
+## 🛡️ Safety & Privacy
+Syniq is built with a **Safety First** philosophy:
+1. **SAFE**: Standard non-destructive commands are displayed normally.
+2. **RISKY**: Commands involving `rm`, `shutdown`, or `systemctl` trigger a warning.
+3. **BLOCKED**: Commands that target the root filesystem (`rm -rf /`) or partition tables are hard-blocked.
 
-MIT License
+**Privacy**: Syniq uses an anonymous public model endpoint. No personal data, telemetry, or system information is ever sent to a project backend.
+
+---
+
+## 📂 Project Architecture
+- `ai.go`: Integration with public, unauthenticated AI providers.
+- `tui.go`: The interactive `bubbletea` state machine and viewport.
+- `main.go`: Command routing and the CLI "Thinking" engine.
+- `safety.go`: Pattern-matching engine for command validation.
+- `ui.go`: Lip Gloss styling and terminal aesthetics.
+
+---
+
+## 📜 License
+MIT License. Created by **Vptsh** (psvineet@zohomail.in).

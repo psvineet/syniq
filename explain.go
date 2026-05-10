@@ -5,20 +5,18 @@ import (
 )
 
 func explain(cmd string) {
-	cfg, err := loadConfig()
-	if err != nil {
-		fmt.Println("Run `syniq connect` first")
-		return
-	}
-
 	prompt := fmt.Sprintf(
-		"Explain the following Linux command in simple terms:\n%s",
+		"Explain the following Linux command in simple terms, highlighting its key flags and purpose:\n\n```bash\n%s\n```",
 		cmd,
 	)
 
-	result, err := callGemini(cfg.ApiKey, prompt)
+	fmt.Printf("\n  %s Thinking...", styleInfo.Render("●"))
+
+	result, err := callModel(prompt)
+	// Clear the "Thinking..." line
+	fmt.Print("\r\033[K")
 	if err != nil {
-		fmt.Println("Error:", err)
+		printError(fmt.Sprintf("Failed to fetch explanation: %v", err))
 		return
 	}
 

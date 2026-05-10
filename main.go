@@ -3,42 +3,35 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
-/*
- *	Usage printer
- */
 func printUsage() {
-	fmt.Println("Usage:")
-	fmt.Println("  syniq connect")
-	fmt.Println("  syniq ask \"your question\"")
-	fmt.Println("  syniq explain \"command\"")
-	fmt.Println("  syniq history")
+	title := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00D7FF")).Render("SYNIQ")
+	fmt.Printf("\n  %s — The AI-Powered Terminal Companion\n\n", title)
+	fmt.Println("  Usage:")
+	fmt.Println("    syniq chat            Start interactive chat session (FREE)")
+	fmt.Println("    syniq ask <query>     Ask a quick question")
+	fmt.Println("    syniq explain <cmd>   Explain a specific command")
+	fmt.Println("    syniq history         Show recent command history")
+	fmt.Println("\n  Interactive Shortcuts:")
+	fmt.Println("    Ctrl+Y                Copy suggested command to clipboard")
+	fmt.Println("    Ctrl+R                Run suggested command (with confirmation)")
+	fmt.Println("\n  Examples:")
+	fmt.Println("    syniq ask find all large logs")
+	fmt.Println("    syniq explain tar -xzvf")
+	fmt.Println()
 }
 
-/*
- *	Connect command
- */
-func connect() {
-	fmt.Print("Enter Gemini API Key: ")
-	var key string
-	fmt.Scanln(&key)
-
-	saveConfig(Config{ApiKey: key})
-	fmt.Println("Connected successfully.")
-}
-
-/*
- *	Ask command
- */
 func ask(question string) {
-	cfg, err := loadConfig()
-	if err != nil {
-		fmt.Println("Run `syniq connect` first")
-		return
-	}
+	fmt.Printf("\n  %s Thinking...", styleInfo.Render("●"))
+	
+	result, err := callModel(question)
+	// Clear the "Thinking..." line
+	fmt.Print("\r\033[K")
 
-	result, err := callGemini(cfg.ApiKey, question)
 	if err != nil {
 		fmt.Println("⚠️ Online lookup failed, checking local cache...")
 
@@ -48,26 +41,29 @@ func ask(question string) {
 			return
 		}
 
-		fmt.Println("❌ No cached result available.")
+		printError(fmt.Sprintf("No cached result available: %v", err))
 		return
 	}
 
 	status, _ := checkSafety(result)
 
 	if status == "BLOCK" {
-		fmt.Println("❌ BLOCKED: This command is extremely dangerous.")
+		printError("BLOCKED: This command is extremely dangerous.")
 		return
 	}
 
 	if status == "WARN" {
-		fmt.Println("⚠️ WARNING: This command may be risky.")
-		fmt.Print("Do you want to see it anyway? (yes/no): ")
+		fmt.Printf("  %s %s\n", 
+			lipgloss.NewStyle().Foreground(lipgloss.Color("#FFAF00")).Render("⚠"),
+			"WARNING: This command may be risky.",
+		)
+		fmt.Print("  Do you want to see it anyway? (yes/no): ")
 
 		var answer string
 		fmt.Scanln(&answer)
 
 		if answer != "yes" {
-			fmt.Println("Cancelled.")
+			fmt.Println("  Cancelled.")
 			return
 		}
 	}
@@ -76,11 +72,7 @@ func ask(question string) {
 	saveHistory(question, result)
 }
 
-/*
- *	Main entry
- */
 func main() {
-
 	if len(os.Args) < 2 {
 		printUsage()
 		return
@@ -88,34 +80,27 @@ func main() {
 
 	command := os.Args[1]
 
-	if command == "connect" {
-		connect()
-		return
-	}
-
-	if command == "ask" {
+	switch command {
+	case "chat":
+		startInteractive()
+	case "ask":
 		if len(os.Args) < 3 {
-			fmt.Println("Usage: syniq ask \"your question\"")
+			printError("Usage: syniq ask <your question>")
 			return
 		}
-		ask(os.Args[2])
-		return
-	}
-
-	if command == "explain" {
+		ask(strings.Join(os.Args[2:], " "))
+	case "explain":
 		if len(os.Args) < 3 {
-			fmt.Println("Usage: syniq explain \"command\"")
+			printError("Usage: syniq explain <command>")
 			return
 		}
-		explain(os.Args[2])
-		return
-	}
-
-	if command == "history" {
+		explain(strings.Join(os.Args[2:], " "))
+	case "history":
 		showHistory()
-		return
+	case "help":
+		printUsage()
+	default:
+		printError(fmt.Sprintf("Unknown command: %s", command))
+		printUsage()
 	}
-
-	fmt.Println("Unknown command:", command)
-	printUsage()
 }
