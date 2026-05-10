@@ -16,14 +16,23 @@ Syniq is a high-performance, local-first CLI tool designed to bridge the gap bet
 ---
 
 ## 🛠️ Installation
-### Prerequisites
-- **Go 1.22** or higher.
+### Binary Packages (.deb / .rpm)
+Download the latest release for your distribution and install:
+
+**Debian / Ubuntu:**
+```bash
+sudo dpkg -i syniq_2.0.0_amd64.deb
+```
+
+**Fedora / RHEL:**
+```bash
+sudo dnf install ./syniq-2.0.0-1.x86_64.rpm
+```
 
 ### Build from Source
 ```bash
-git clone https://github.com/Vptsh/syniq.git
+git clone https://github.com/psvineet/syniq.git
 cd syniq
-go mod tidy
 go build -o syniq
 sudo mv syniq /usr/local/bin/syniq
 ```
@@ -54,6 +63,12 @@ syniq explain tar -xzvf archive.tar.gz
 Review your previous queries and the AI's suggestions:
 ```bash
 syniq history
+```
+
+### 5. Version
+Check current version:
+```bash
+syniq version
 ```
 
 ---
