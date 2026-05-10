@@ -90,4 +90,4 @@ Syniq is built with a **Safety First** philosophy:
 ---
 
 ## 📜 License
-MIT License. Created by **Vptsh** (psvineet@zohomail.in).
+MIT License. Created by **Vineet Pratap Singh** (psvineet@zohomail.in).
